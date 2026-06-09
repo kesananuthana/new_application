@@ -1,21 +1,23 @@
-name: flutter
+name: Flutter
 
 on:
   push:
     branches:
       - main
+
   pull_request:
     branches:
       - main
 
 jobs:
-  buld-and-test:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.0'
@@ -23,5 +25,5 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build docker image
-        run : docker build -t lytis .
+      - name: Build Docker Image
+        run: docker build -t lytis .
