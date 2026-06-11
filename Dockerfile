@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-Run flutter pub get
-Run flutter build web
+RUN flutter pub get
+RUN flutter build web
 
 FROM nginx:alpine
 
