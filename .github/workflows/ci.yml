@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_requests:
+  pull_request:
     branches:
       - main
   
@@ -19,10 +19,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.1'
-
       
       - name: Install Dependencies
-        uses: Run flutter pub get
+        run: flutter pub get
 
       - name: Build Docker image
-        uses: docker build -t myapplication .
+        run: docker build -t myapplication .
