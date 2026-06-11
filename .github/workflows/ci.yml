@@ -1,0 +1,28 @@
+name: Login form
+
+on:
+  push:
+    branches:
+      - main
+  pull_requests:
+    branches:
+      - main
+  
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.1'
+
+      
+      - name: Install Dependencies
+        uses: Run flutter pub get
+
+      - name: Build Docker image
+        uses: docker build -t myapplication .
