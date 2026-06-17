@@ -18,7 +18,7 @@ class UsersPage extends ConsumerWidget {
               return ListTile(
                 leading: Text('id : ${user[index].id}'),
                 title: Text(user[index].email),
-                subtitle: Text(user[index].name),
+                trailing: Text(user[index].name),
               );
             },
           );
