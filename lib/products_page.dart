@@ -13,6 +13,16 @@ class ProductsPage extends ConsumerWidget {
       appBar: AppBar(title: Text('List of Products'), centerTitle: true),
       body: Column(
         children: [
+          GestureDetector(
+            onTap: () async {
+              final message = await ProductsRepoImpl().deleteProducts();
+              ref.invalidate(productsProvider);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(message)));
+            },
+            child: Icon(Icons.delete),
+          ),
           Expanded(
             child: productsData.when(
               data: (product) {
