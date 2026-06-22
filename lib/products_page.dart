@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_icon_class/font_awesome_icon_class.dart';
 import 'package:myapplication/data/products_repo_impl.dart';
 import 'package:myapplication/provider/products_provider.dart';
 
@@ -40,7 +39,7 @@ class ProductsPage extends ConsumerWidget {
                             );
                           }
                         },
-                        child: Icon(FontAwesomeIcons.deleteLeft),
+                        child: Icon(Icons.delete),
                       ),
                     );
                   },
