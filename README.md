@@ -14,3 +14,16 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+ steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.1'
+
+GitHub creates a runner (virtual machine).
+Checkout Code → Downloads your Flutter project.
+Setup Flutter → Installs Flutter SDK

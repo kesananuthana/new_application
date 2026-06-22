@@ -7,19 +7,31 @@ import 'package:myapplication/models/products_model.dart';
 class ProductsRepoImpl implements ProductsRepo {
   @override
   Future<List<ProductsModel>> getProducts() async {
-    List<ProductsModel> products = <ProductsModel>[];
     final response = await http.get(
       Uri.parse("https://go-application.onrender.com/products"),
     );
-    print('response :${response.body}');
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      products = result
+      if (result == null) {
+        return [];
+      }
+      return result
           .map<ProductsModel>((e) => ProductsModel.fromJson(e))
           .toList();
     }
 
-    return products;
+    return [];
+  }
+
+  @override
+  Future<String> deleteProducts() async {
+    final response = await http.delete(
+      Uri.parse("https://go-application.onrender.com/deleteProducts"),
+    );
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return '';
   }
 }
