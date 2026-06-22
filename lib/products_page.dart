@@ -11,43 +11,53 @@ class ProductsPage extends ConsumerWidget {
     final productsData = ref.watch(productsProvider);
     return Scaffold(
       appBar: AppBar(title: Text('List of Products'), centerTitle: true),
-      body: productsData.when(
-        data: (product) {
-          return product.isNotEmpty
-              ? ListView.builder(
-                  itemCount: product.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: Text('Product Id: ${product[index].pid}'),
-                      title: Text('Name : ${product[index].name}'),
-                      subtitle: Text(
-                        'Price : ${product[index].price.toString()}',
-                      ),
-                      trailing: GestureDetector(
-                        onTap: () async {
-                          try {
-                            final message = await ProductsRepoImpl()
-                                .deleteProducts();
-                            ref.invalidate(productsProvider);
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text(message)));
-                          } catch (e) {
-                            print(e);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
-                          }
+      body: Column(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              final message = await ProductsRepoImpl().deleteProducts();
+              ref.invalidate(productsProvider);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(message)));
+            },
+            child: Icon(Icons.delete),
+          ),
+          Expanded(
+            child: productsData.when(
+              data: (product) {
+                return product.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: product.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: Text('Product Id: ${product[index].pid}'),
+                            title: Text('Name : ${product[index].name}'),
+                            subtitle: Text(
+                              'Price : ${product[index].price.toString()}',
+                            ),
+                            trailing: GestureDetector(
+                              onTap: () async {
+                                final message = await ProductsRepoImpl()
+                                    .deleteProdcutById(product[index].pid);
+                                ref.invalidate(productsProvider);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(message)),
+                                );
+                              },
+                              child: Icon(Icons.delete),
+                            ),
+                          );
                         },
-                        child: Icon(Icons.delete),
-                      ),
-                    );
-                  },
-                )
-              : Center(child: Text('No products found'));
-        },
-        error: (error, stack) => Text(error.toString()),
-        loading: () => Center(child: CircularProgressIndicator.adaptive()),
+                      )
+                    : Center(child: Text('No products found'));
+              },
+              error: (error, stack) => Text(error.toString()),
+              loading: () =>
+                  Center(child: CircularProgressIndicator.adaptive()),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -29,8 +29,23 @@ class ProductsRepoImpl implements ProductsRepo {
     final response = await http.delete(
       Uri.parse("https://go-application.onrender.com/deleteProducts"),
     );
+
     if (response.statusCode == 200) {
-      return response.body;
+      final data = jsonDecode(response.body);
+      return data["message"];
+    }
+    return '';
+  }
+
+  @override
+  Future<String> deleteProdcutById(String pid) async {
+    final response = await http.delete(
+      Uri.parse("https://go-application.onrender.com/deletProducts/$pid"),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data["message"];
     }
     return '';
   }
