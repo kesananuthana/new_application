@@ -6,6 +6,20 @@ import 'package:myapplication/models/products_model.dart';
 
 class ProductsRepoImpl implements ProductsRepo {
   @override
+  Future<String> addProducts(String pid, String name, int price) async {
+    final response = await http.post(
+      Uri.parse("https://go-application.onrender.com/addProducts"),
+      body: jsonEncode({"pid": pid, "name": name, "price": price}),
+    );
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      return result["message"];
+    }
+    return '';
+  }
+
+  @override
   Future<List<ProductsModel>> getProducts() async {
     final response = await http.get(
       Uri.parse("https://go-application.onrender.com/products"),
@@ -46,6 +60,19 @@ class ProductsRepoImpl implements ProductsRepo {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return data["message"];
+    }
+    return '';
+  }
+
+  @override
+  Future<String> updateProduct(String pid, String name, int price) async {
+    final response = await http.put(
+      Uri.parse("https://go-application.onrender.com/updateProductById/$pid"),
+      body: jsonEncode({"name": name, "price": price}),
+    );
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      return result["message"];
     }
     return '';
   }

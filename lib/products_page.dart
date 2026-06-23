@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapplication/data/products_repo_impl.dart';
+import 'package:myapplication/models/products_model.dart';
 import 'package:myapplication/provider/products_provider.dart';
 
 class ProductsPage extends ConsumerWidget {
@@ -13,15 +14,27 @@ class ProductsPage extends ConsumerWidget {
       appBar: AppBar(title: Text('List of Products'), centerTitle: true),
       body: Column(
         children: [
-          GestureDetector(
-            onTap: () async {
-              final message = await ProductsRepoImpl().deleteProducts();
-              ref.invalidate(productsProvider);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(message)));
-            },
-            child: Icon(Icons.delete),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _showDailog(context, ref);
+                },
+                child: Icon(Icons.add),
+              ),
+              SizedBox(width: 20),
+              GestureDetector(
+                onTap: () async {
+                  final message = await ProductsRepoImpl().deleteProducts();
+                  ref.invalidate(productsProvider);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                },
+                child: Icon(Icons.delete),
+              ),
+            ],
           ),
           Expanded(
             child: productsData.when(
@@ -36,16 +49,39 @@ class ProductsPage extends ConsumerWidget {
                             subtitle: Text(
                               'Price : ${product[index].price.toString()}',
                             ),
-                            trailing: GestureDetector(
-                              onTap: () async {
-                                final message = await ProductsRepoImpl()
-                                    .deleteProdcutById(product[index].pid);
-                                ref.invalidate(productsProvider);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(message)),
-                                );
-                              },
-                              child: Icon(Icons.delete),
+                            trailing: SizedBox(
+                              height: 50,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      print('clicked');
+                                      _showDetails(
+                                        context,
+                                        product[index],
+                                        ref,
+                                      );
+                                    },
+                                    child: Icon(Icons.edit),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final message = await ProductsRepoImpl()
+                                          .deleteProdcutById(
+                                            product[index].pid,
+                                          );
+                                      ref.invalidate(productsProvider);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(message)),
+                                      );
+                                    },
+                                    child: Icon(Icons.delete),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -59,6 +95,84 @@ class ProductsPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showDailog(context, WidgetRef ref) {
+    final TextEditingController pidController = TextEditingController(),
+        nameController = TextEditingController(),
+        priceController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Column(
+            children: [
+              TextFormField(controller: pidController),
+              TextFormField(controller: nameController),
+              TextFormField(controller: priceController),
+              ElevatedButton(
+                onPressed: () async {
+                  final message = await ProductsRepoImpl().addProducts(
+                    pidController.text,
+                    nameController.text,
+                    int.parse(priceController.text),
+                  );
+                  ref.invalidate(productsProvider);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDetails(
+    BuildContext context,
+    ProductsModel product,
+    WidgetRef ref,
+  ) {
+    final TextEditingController pidController = TextEditingController(),
+        nameController = TextEditingController(),
+        priceController = TextEditingController();
+    pidController.text = product.pid;
+    nameController.text = product.name;
+    priceController.text = product.price.toString();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextFormField(controller: pidController),
+                TextFormField(controller: nameController),
+                TextFormField(controller: priceController),
+                ElevatedButton(
+                  onPressed: () async {
+                    final message = await ProductsRepoImpl().updateProduct(
+                      product.pid,
+                      nameController.text,
+                      int.parse(priceController.text),
+                    );
+                    ref.invalidate(productsProvider);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(message)));
+                  },
+                  child: Text('Save'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
